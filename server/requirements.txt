@@ -1,0 +1,6 @@
+Flask==3.0.0
+waitress
+couchdb==1.2
+python-dotenv==1.0.0
+psycopg[binary]
+jwt

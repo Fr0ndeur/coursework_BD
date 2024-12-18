@@ -25,6 +25,10 @@ class UserService:
         token = jwt.encode(payload, current_app.config["SECRET_KEY"], algorithm="HS256")
         return {"access_token": token, "role": user.role}
 
+    def get_employee_id_by_user_id(self, user_id):
+        """Получает employee_id по user_id."""
+        return self.repo.get_employee_id_by_user_id(user_id)
+
     def create_user(self, username, password, role, employee_id=None):
         """Создание нового пользователя с хэшированием пароля."""
         hashed_password = generate_password_hash(password)

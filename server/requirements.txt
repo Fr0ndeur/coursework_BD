@@ -3,4 +3,5 @@ waitress
 couchdb==1.2
 python-dotenv==1.0.0
 psycopg[binary]
-jwt
+pyjwt
+flask-cors

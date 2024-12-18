@@ -1,5 +1,7 @@
-from flask import Blueprint, request, jsonify
+# app/controllers/user_controller.py
+from flask import Blueprint, request, jsonify, g
 from app.services.user_service import UserService
+from app.decorators.auth_decorator import jwt_required
 
 user_bp = Blueprint("users", __name__)
 user_service = UserService()
@@ -23,8 +25,12 @@ def login():
 
 
 @user_bp.route("/", methods=["POST"])
+@jwt_required(roles=["admin"])
 def create_user():
-    """Создание нового пользователя."""
+    """
+    Создание нового пользователя.
+    Доступно только для администраторов.
+    """
     data = request.get_json()
     username = data.get("username")
     password = data.get("password")
@@ -39,8 +45,12 @@ def create_user():
 
 
 @user_bp.route("/", methods=["GET"])
+@jwt_required(roles=["admin", "accountant"])
 def get_all_users():
-    """Получение всех пользователей."""
+    """
+    Получение всех пользователей.
+    Доступно только для администраторов и бухгалтеров.
+    """
     users = user_service.get_all_users()
     return (
         jsonify(
@@ -59,8 +69,17 @@ def get_all_users():
 
 
 @user_bp.route("/<int:user_id>", methods=["GET"])
+@jwt_required(roles=["admin", "accountant", "user"])
 def get_user(user_id):
-    """Получение пользователя по его ID."""
+    """
+    Получение пользователя по его ID.
+    - admin и accountant могут получать информацию о любом пользователе.
+    - user может получить информацию только о себе.
+    """
+    # Если роль "user", проверяем соответствие user_id
+    if g.user_role == "user" and g.user_id != user_id:
+        return jsonify({"error": "Forbidden"}), 403
+
     user = user_service.get_user_by_id(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404

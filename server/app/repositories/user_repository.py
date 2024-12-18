@@ -65,3 +65,12 @@ class UserRepository:
             rows = cur.fetchall()
         conn.close()
         return [User(row[0], row[1], None, row[2], row[3]) for row in rows]
+
+    def get_employee_id_by_user_id(self, user_id):
+        """Возвращает employee_id по user_id."""
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute("SELECT employee_id FROM users WHERE user_id = %s", (user_id,))
+            row = cur.fetchone()
+        conn.close()
+        return row[0] if row else None

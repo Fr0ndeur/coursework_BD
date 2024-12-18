@@ -1,5 +1,6 @@
 # app/main.py
 from flask import Flask
+from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
@@ -13,6 +14,7 @@ def create_app():
     """Создание и настройка Flask-приложения."""
     app = Flask(__name__)
 
+    CORS(app, supports_credentials=True)
     # Подключение конфигурации
     environment = os.getenv("FLASK_ENV", "development")
     if environment == "production":

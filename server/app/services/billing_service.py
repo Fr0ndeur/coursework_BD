@@ -97,3 +97,16 @@ class BillingService:
     def delete_bill(self, bill_id):
         """Удаляет счет по ID."""
         return self.repo.delete(bill_id)
+    
+    def pay_bill(self, bill_id):
+        """Оплачивает счет, меняя статус на PAID."""
+        bill = self.repo.find_by_id(bill_id)
+        if not bill:
+            return None
+
+        if bill.payment_status == "PAID":
+            raise ValueError("Bill is already paid")
+
+        bill.payment_status = "PAID"
+        return self.repo.update(bill)
+

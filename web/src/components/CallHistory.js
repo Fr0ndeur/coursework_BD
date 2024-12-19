@@ -9,7 +9,7 @@ const CallHistory = () => {
     useEffect(() => {
         const fetchCalls = async () => {
             try {
-                // Тут ти можеш замінити імітацію на реальний запит до API
+                // Імітація отримання даних
                 const callsData = {
                     calls: [
                         {
@@ -30,7 +30,6 @@ const CallHistory = () => {
                             duration: 17,
                             employee_id: 4,
                         },
-                        // Інші дзвінки...
                     ],
                 };
 
@@ -51,21 +50,27 @@ const CallHistory = () => {
     };
 
     return (
-        <div className="mb-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold mb-2">Call History</h2>
-                <button onClick={toggleOpen} className="text-blue-500">
-                    {isOpen ? "Hide" : "Show"} <span>{isOpen ? "▲" : "▼"}</span>
+        <div
+            className={`fixed bottom-0 left-0 w-full bg-white shadow-md border-t border-gray-300 transition-transform duration-300 ${
+                isOpen ? "translate-y-0" : "translate-y-full"
+            }`}
+        >
+            <div className="flex items-center justify-between p-4 bg-gray-800 text-white">
+                <h2 className="text-lg font-bold">Call History</h2>
+                <button
+                    onClick={toggleOpen}
+                    className="text-white bg-gray-600 p-2 rounded-full hover:bg-gray-700"
+                >
+                    {isOpen ? "Hide ▲" : "Show ▼"}
                 </button>
             </div>
 
-            {/* Відображаємо список, якщо відкрито */}
             {isOpen && (
-                <div className="border border-gray-300 rounded-lg p-4">
+                <div className="p-4 max-h-80 overflow-y-auto">
                     {loading ? (
                         <p>Loading call history...</p>
                     ) : (
-                        <table className="w-full">
+                        <table className="w-full text-sm">
                             <thead>
                                 <tr>
                                     <th className="text-left p-2">Call Type</th>
@@ -74,7 +79,7 @@ const CallHistory = () => {
                                         Dialed Number
                                     </th>
                                     <th className="text-left p-2">
-                                        Duration (seconds)
+                                        Duration (s)
                                     </th>
                                     <th className="text-left p-2">
                                         Cost Calculated

@@ -53,11 +53,6 @@ const AccountantPage = () => {
         <div>
             <div className="flex">
                 <NavigationPanel /> {/* Виклик компонента навігації */}
-                <div className="p-8 w-full">
-                    <h1 className="text-2xl font-bold mb-4">Admin Page</h1>
-
-                    {/* Інший вміст сторінки адміна */}
-                </div>
             </div>
             <div className="p-8 max-w-5xl mx-auto">
                 <h1 className="text-2xl font-bold mb-6">

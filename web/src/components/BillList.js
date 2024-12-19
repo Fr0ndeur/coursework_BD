@@ -1,9 +1,17 @@
-// BillList.js
 import React from "react";
 
-const BillList = ({ bills }) => {
+const BillList = ({ bills = [] }) => {
+    // Перевіряємо, чи є рахунки. Якщо ні, виводимо повідомлення.
+    if (bills.length === 0) {
+        return (
+            <div className="text-center text-gray-500 mt-6">
+                <p>No bills available.</p>
+            </div>
+        );
+    }
+
     return (
-        <div>
+        <div className="fixed top-0 right-0 h-screen w-80 bg-white shadow-lg border-l border-gray-200 p-6 overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Your Bills</h2>
             <div className="space-y-4">
                 {bills.map((bill) => (

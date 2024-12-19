@@ -73,10 +73,6 @@ const UserPage = () => {
         <div>
             <div className="flex">
                 <NavigationPanel /> {/* Виклик компонента навігації */}
-                <div className="p-8 w-full">
-                    <h1 className="text-2xl font-bold mb-4">Admin Page</h1>
-                    {/* Інший вміст сторінки адміна */}
-                </div>
             </div>
 
             <div className="p-8 max-w-3xl mx-auto">
@@ -161,10 +157,10 @@ const UserPage = () => {
                 <BillList bills={bills} />
             </div>
 
-            <div className="mb-6">
-                {/* Використання компонента CallHistory */}
-                <CallHistory />
-            </div>
+            <h1 className="text-center mt-8">Welcome to the Dashboard</h1>
+
+            {/* Панель дзвінків */}
+            <CallHistory />
         </div>
     );
 };

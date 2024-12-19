@@ -4,7 +4,7 @@
 
 # Сімков Микита
 
-`python3 -m venv venv`
+`python3 -m venv .venv`
 
 `./.venv/scripts/Activate`
 

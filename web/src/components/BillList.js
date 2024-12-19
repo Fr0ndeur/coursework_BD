@@ -1,6 +1,6 @@
 import React from "react";
 
-const BillList = ({ bills = [] }) => {
+const BillList = ({ bills = [], onPayBill }) => {
     // Перевіряємо, чи є рахунки. Якщо ні, виводимо повідомлення.
     if (bills.length === 0) {
         return (
@@ -52,6 +52,15 @@ const BillList = ({ bills = [] }) => {
                         >
                             <strong>Status:</strong> {bill.payment_status}
                         </p>
+
+                        {bill.payment_status !== "PAID" && (
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                                onClick={() => onPayBill(bill.bill_id)} // Викликаємо onPayBill
+                            >
+                                Pay Bill
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>

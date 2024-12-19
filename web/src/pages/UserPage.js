@@ -16,7 +16,7 @@ const UserPage = () => {
   const totalDebt = bills?.length
     ? bills
         .filter((bill) => bill.payment_status !== 'PAID')
-        .reduce((total, bill) => total + bill.final_amount, 0)
+        .reduce((total, bill) => total + (Number(bill.final_amount) || 0), 0)
     : 0; // Если bills пустой, долг равен 0
 
   useEffect(() => {

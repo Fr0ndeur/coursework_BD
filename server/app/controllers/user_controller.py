@@ -7,6 +7,26 @@ user_bp = Blueprint("users", __name__)
 user_service = UserService()
 
 
+@user_bp.route("/me", methods=["GET"])
+@jwt_required()
+def get_current_user():
+    """
+    Возвращает информацию о текущем пользователе, основываясь на JWT.
+    """
+    user_id = g.user_id
+    user = user_service.get_user_by_id(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "user_id": user.user_id,
+        "username": user.username,
+        "role": user.role,
+        "employee_id": user.employee_id,
+    }), 200
+
+
 @user_bp.route("/login", methods=["POST"])
 def login():
     """Авторизация пользователя."""
@@ -21,7 +41,27 @@ def login():
     if not auth_response:
         return jsonify({"error": "Invalid credentials"}), 401
 
-    return jsonify(auth_response), 200
+    # Создание ответа
+    response = jsonify({"message": "Login successful", "role": auth_response["role"], "token" : auth_response["access_token"]})
+
+    # Установка токена в HTTP-only куки
+    response.set_cookie(
+        "access_token",  # Имя куки
+        auth_response["access_token"],  # Значение токена
+        httponly=True,  # Доступ только через HTTP
+        secure=False,  # True для HTTPS
+        samesite="Strict"  # Кука доступна только для того же сайта
+    )
+
+    return response, 200
+
+@user_bp.route("/logout", methods=["POST"])
+def logout():
+    """Выход пользователя (удаление куки)."""
+    response = jsonify({"message": "Logged out successfully"})
+    response.delete_cookie("access_token")  # Удаляем куки
+    return response, 200
+
 
 
 @user_bp.route("/", methods=["POST"])

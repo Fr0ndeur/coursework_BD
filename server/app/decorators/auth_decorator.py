@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify, g
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Секретный ключ для подписи JWT
 SECRET_KEY = "your_secret_key"
@@ -19,13 +19,17 @@ def jwt_required(roles=None):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            # Извлекаем заголовок Authorization
+            # Попытка извлечь токен из заголовка Authorization
+            token = None
             auth_header = request.headers.get("Authorization", None)
-            if not auth_header or not auth_header.startswith("Bearer "):
-                return jsonify({"error": "Missing or invalid token"}), 401
+            if auth_header and auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1]
 
-            # Извлекаем токен
-            token = auth_header.split(" ")[1]
+            # Если токен отсутствует в заголовке, пробуем извлечь его из куки
+            if not token:
+                token = request.cookies.get("access_token")
+                if not token:
+                    return jsonify({"error": "Missing or invalid token"}), 401
 
             try:
                 # Декодируем токен

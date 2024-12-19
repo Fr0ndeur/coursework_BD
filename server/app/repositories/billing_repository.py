@@ -165,3 +165,26 @@ class BillingRepository:
             deleted_id = cur.fetchone()
         conn.commit()
         return deleted_id is not None
+
+    def get_monthly_summary(self, month_year):
+        """
+        Вызывает хранимую процедуру для получения суммарной информации о счетах за указанный месяц.
+        """
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            # Вызов хранимой процедуры
+            cur.execute(
+                """
+                SELECT * FROM get_monthly_billing_summary(%s)
+                """,
+                (month_year,)
+            )
+            result = cur.fetchone()
+
+        if result:
+            return {
+                "total_amount": float(result[0]),
+                "paid_amount": float(result[1]),
+                "unpaid_bills": result[2],
+            }
+        return None

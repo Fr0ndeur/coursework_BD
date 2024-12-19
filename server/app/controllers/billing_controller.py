@@ -145,3 +145,15 @@ def pay_bill(bill_id):
         return jsonify({"error": "Unable to pay bill"}), 500
 
     return jsonify(updated_bill.to_dict()), 200
+
+@billing_bp.route("/summary/<string:month_year>", methods=["GET"])
+@jwt_required(roles=["admin", "accountant"])
+def get_billing_summary(month_year):
+    """
+    Возвращает суммарную информацию о счетах за указанный месяц.
+    Доступно только администраторам и бухгалтерам.
+    """
+    summary = billing_service.get_billing_summary(month_year)
+    if not summary:
+        return jsonify({"message": "No bills found for this month."}), 404
+    return jsonify(summary), 200

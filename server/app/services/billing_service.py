@@ -110,3 +110,8 @@ class BillingService:
         bill.payment_status = "PAID"
         return self.repo.update(bill)
 
+    def get_billing_summary(self, month_year):
+        """
+        Получает суммарную информацию о счетах за указанный месяц.
+        """
+        return self.repo.get_monthly_summary(month_year)

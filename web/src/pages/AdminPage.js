@@ -14,6 +14,7 @@ const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [userRole, setUserRole] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -29,26 +30,35 @@ const AdminPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [employeeResponse, usersResponse, departmentResponse] =
-          await Promise.all([
-            fetch('http://localhost:5000/employees/', {
-              method: 'GET',
-              credentials: 'include',
-            }),
-            fetch('http://localhost:5000/users/', {
-              method: 'GET',
-              credentials: 'include',
-            }),
-            fetch('http://localhost:5000/departments', {
-              method: 'GET',
-              credentials: 'include',
-            }),
-          ]);
+        const [
+          employeeResponse,
+          usersResponse,
+          departmentResponse,
+          roleResponse,
+        ] = await Promise.all([
+          fetch('http://localhost:5000/employees/', {
+            method: 'GET',
+            credentials: 'include',
+          }),
+          fetch('http://localhost:5000/users/', {
+            method: 'GET',
+            credentials: 'include',
+          }),
+          fetch('http://localhost:5000/departments', {
+            method: 'GET',
+            credentials: 'include',
+          }),
+          fetch('http://localhost:5000/users/me', {
+            method: 'GET',
+            credentials: 'include',
+          }),
+        ]);
 
         if (
           !employeeResponse.ok ||
           !usersResponse.ok ||
-          !departmentResponse.ok
+          !departmentResponse.ok ||
+          !roleResponse.ok
         ) {
           throw new Error('Failed to fetch data.');
         }
@@ -56,7 +66,9 @@ const AdminPage = () => {
         const employeeData = await employeeResponse.json();
         const userData = await usersResponse.json();
         const departmentData = await departmentResponse.json();
+        const roleData = await roleResponse.json();
 
+        setUserRole(roleData.role);
         const sanitizedEmployees = employeeData.map((emp) => ({
           id: emp.employee_id, // Используем для отображения
           employee_id: emp.employee_id, // Оставляем для запросов
@@ -183,6 +195,11 @@ const AdminPage = () => {
   };
 
   const handleDeleteEmployee = async (id) => {
+    if (!id || (typeof id !== 'string' && typeof id !== 'number')) {
+      console.error('Invalid ID:', id);
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:5000/employees/${id}`, {
         method: 'DELETE',
@@ -243,6 +260,7 @@ const AdminPage = () => {
         <EmployeeViewModal
           employee={viewEmployee}
           onClose={() => setIsViewModalOpen(false)}
+          userRole={userRole} // Передаём роль пользователя
         />
       )}
 
@@ -313,13 +331,7 @@ const AdminPage = () => {
                       </button>
                       <button
                         className='text-red-500 mr-2'
-                        onClick={() =>
-                          setEmployees((prev) =>
-                            prev.filter(
-                              (e) => e.employee_id !== emp.employee_id
-                            )
-                          )
-                        }
+                        onClick={() => handleDeleteEmployee(emp.employee_id)}
                       >
                         Delete
                       </button>

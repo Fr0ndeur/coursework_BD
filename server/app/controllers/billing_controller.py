@@ -117,3 +117,31 @@ def delete_bill(bill_id):
     if success:
         return jsonify({"status": "Bill deleted"}), 200
     return jsonify({"error": "Bill not found"}), 404
+
+
+@billing_bp.route("/pay/<int:bill_id>", methods=["POST"])
+@jwt_required(roles=["admin", "accountant", "user"])
+def pay_bill(bill_id):
+    """
+    Оплачивает счет.
+    - Администраторы и бухгалтеры могут оплачивать любые счета.
+    - Обычные пользователи могут оплачивать только свои счета.
+    """
+    bill = billing_service.get_bill_by_id(bill_id)
+    if not bill:
+        return jsonify({"error": "Bill not found"}), 404
+
+    # Проверка доступа для обычных пользователей
+    if g.user_role == "user" and bill.employee_id != g.employee_id:
+        return jsonify({"error": "Forbidden"}), 403
+
+    # Оплачиваем счёт
+    try:
+        updated_bill = billing_service.pay_bill(bill_id)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+    if not updated_bill:
+        return jsonify({"error": "Unable to pay bill"}), 500
+
+    return jsonify(updated_bill.to_dict()), 200

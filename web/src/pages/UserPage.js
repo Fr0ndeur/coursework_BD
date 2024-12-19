@@ -1,172 +1,189 @@
-import React, { useState, useEffect } from "react";
-import NavigationPanel from "../components/Nav-panel.js";
-import BillList from "../components/BillList"; // Імпортуємо новий компонент
-import CallHistory from "../components/CallHistory";
+import React, { useState, useEffect } from 'react';
+import NavigationPanel from '../components/Nav-panel.js';
+import BillList from '../components/BillList';
+import CallHistory from '../components/CallHistory';
 
 const UserPage = () => {
-    const [balance, setBalance] = useState(1200); // User's current balance
-    const [discounts, setDiscounts] = useState([]); // New state for discounts
-    const [newPlan, setNewPlan] = useState(""); // Selected new plan
-    const [topUpAmount, setTopUpAmount] = useState(""); // Amount to top up
+  const [balance, setBalance] = useState(1200); // User's current balance (пока оставляем как есть)
+  const [discounts, setDiscounts] = useState([]); // Discounts data
+  const [newPlan, setNewPlan] = useState(''); // Selected new plan
+  const [topUpAmount, setTopUpAmount] = useState(''); // Amount to top up
+  const [bills, setBills] = useState([]); // User bills
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(''); // Error state
 
-    const [bills, setBills] = useState([
-        {
-            bill_id: 1,
-            discount_applied: "10.00",
-            employee_id: 4,
-            final_amount: "270.00",
-            month_year: "2024-12",
-            payment_status: "PAID",
-            total_cost: "300.00",
-            total_duration: 120,
-        },
-        {
-            bill_id: 7,
-            discount_applied: "14.34",
-            employee_id: 4,
-            final_amount: "69.00",
-            month_year: "2024-11",
-            payment_status: "UNPAID",
-            total_cost: "83.50",
-            total_duration: 104,
-        },
-    ]); // Example bills data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Запрос к API для получения текущего пользователя
+        const userResponse = await fetch('http://localhost:5000/users/me', {
+          method: 'GET',
+          credentials: 'include', // Включаем cookies
+        });
 
-    // Use effect to simulate fetching JSON data (you can replace this with an actual API call)
-    useEffect(() => {
-        const fetchDiscounts = async () => {
-            const discountsData = {
-                discounts: [
-                    { call_type: "local", discount: "8.00" },
-                    { call_type: "intercity", discount: "12.00" },
-                    { call_type: "international", discount: "20.00" },
-                ],
-                employee_id: 4,
-            };
-            setDiscounts(discountsData.discounts); // Set discounts data
-        };
-
-        fetchDiscounts();
-    }, []);
-
-    const handlePlanChange = () => {
-        if (newPlan) {
-            alert(`Your plan has been changed to: ${newPlan}`);
-            setNewPlan("");
-        } else {
-            alert("Please select a new plan before submitting.");
+        if (!userResponse.ok) {
+          throw new Error('Failed to fetch user data.');
         }
+
+        const userData = await userResponse.json();
+        const employeeId = userData.employee_id;
+
+        // Запрос к API для получения счетов
+        const billsResponse = await fetch(
+          `http://localhost:5000/billing/employee/${employeeId}`,
+          {
+            method: 'GET',
+            credentials: 'include', // Включаем cookies
+          }
+        );
+
+        if (!billsResponse.ok) {
+          throw new Error('Failed to fetch billing data.');
+        }
+
+        const billsData = await billsResponse.json(); // Объявляем переменную здесь
+
+        // Проверяем, является ли billsData массивом
+        if (Array.isArray(billsData)) {
+          setBills(billsData); // Устанавливаем счета напрямую
+        } else if (billsData.bills && Array.isArray(billsData.bills)) {
+          setBills(billsData.bills); // Если данные в поле "bills"
+        } else {
+          throw new Error('Unexpected billing data format.');
+        }
+
+        setLoading(false); // Снимаем состояние загрузки
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError(err.message);
+        setLoading(false);
+      }
     };
 
-    const handleTopUp = () => {
-        const amount = parseFloat(topUpAmount);
-        if (amount && amount > 0) {
-            setBalance(balance + amount);
-            alert(`Your account has been topped up with $${amount}.`);
-            setTopUpAmount("");
-        } else {
-            alert("Please enter a valid amount to top up.");
-        }
-    };
+    fetchData();
+  }, []);
 
-    return (
-        <div>
-            <div className="flex">
-                <NavigationPanel /> {/* Виклик компонента навігації */}
-                <div className="p-8 w-full">
-                    <h1 className="text-2xl font-bold mb-4">Admin Page</h1>
-                    {/* Інший вміст сторінки адміна */}
-                </div>
-            </div>
+  const handlePlanChange = () => {
+    if (newPlan) {
+      alert(`Your plan has been changed to: ${newPlan}`);
+      setNewPlan('');
+    } else {
+      alert('Please select a new plan before submitting.');
+    }
+  };
 
-            <div className="p-8 max-w-3xl mx-auto">
-                <h1 className="text-2xl font-bold mb-6">User Dashboard</h1>
+  const handleTopUp = () => {
+    const amount = parseFloat(topUpAmount);
+    if (amount && amount > 0) {
+      setBalance(balance + amount);
+      alert(`Your account has been topped up with $${amount}.`);
+      setTopUpAmount('');
+    } else {
+      alert('Please enter a valid amount to top up.');
+    }
+  };
 
-                <div className="mb-6">
-                    <h2 className="text-xl font-bold mb-2">Your Account</h2>
-                    <div className="border border-gray-300 rounded-lg p-4">
-                        <p className="mb-2 text-lg">
-                            Current Balance:{" "}
-                            <span className="font-bold">
-                                ${balance.toFixed(2)}
-                            </span>
-                        </p>
-                    </div>
-                </div>
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
-                <div className="mb-6">
-                    <h2 className="text-xl font-bold mb-2">Your Discounts</h2>
-                    <div className="border border-gray-300 rounded-lg p-4">
-                        {discounts.length > 0 ? (
-                            <div className="space-y-2">
-                                {discounts.map((discount) => (
-                                    <div
-                                        key={discount.call_type}
-                                        className="flex justify-between text-lg"
-                                    >
-                                        <span className="font-semibold capitalize">
-                                            {discount.call_type}:
-                                        </span>
-                                        <span>{discount.discount}%</span>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p>Loading discounts...</p>
-                        )}
-                    </div>
-                </div>
+  if (error) {
+    return <p className='text-red-500'>Error: {error}</p>;
+  }
 
-                <div className="mb-6">
-                    <h2 className="text-xl font-bold mb-2">Change Your Plan</h2>
-                    <div className="flex items-center gap-4">
-                        <input
-                            type="text"
-                            placeholder="Enter new plan"
-                            className="border border-gray-300 rounded-lg p-2 flex-1"
-                            value={newPlan}
-                            onChange={(e) => setNewPlan(e.target.value)}
-                        />
-                        <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                            onClick={handlePlanChange}
-                        >
-                            Change Plan
-                        </button>
-                    </div>
-                </div>
-
-                <div className="mb-6">
-                    <h2 className="text-xl font-bold mb-2">
-                        Top Up Your Balance
-                    </h2>
-                    <div className="flex items-center gap-4">
-                        <input
-                            type="number"
-                            placeholder="Enter amount"
-                            className="border border-gray-300 rounded-lg p-2 flex-1"
-                            value={topUpAmount}
-                            onChange={(e) => setTopUpAmount(e.target.value)}
-                        />
-                        <button
-                            className="bg-green-500 text-white px-4 py-2 rounded-lg"
-                            onClick={handleTopUp}
-                        >
-                            Top Up
-                        </button>
-                    </div>
-                </div>
-
-                {/* Додаємо компонент для відображення рахунків */}
-                <BillList bills={bills} />
-            </div>
-
-            <div className="mb-6">
-                {/* Використання компонента CallHistory */}
-                <CallHistory />
-            </div>
+  return (
+    <div>
+      <div className='flex'>
+        <NavigationPanel /> {/* Панель навигации */}
+        <div className='p-8 w-full'>
+          <h1 className='text-2xl font-bold mb-4'>Admin Page</h1>
         </div>
-    );
+      </div>
+
+      <div className='p-8 max-w-3xl mx-auto'>
+        <h1 className='text-2xl font-bold mb-6'>User Dashboard</h1>
+
+        <div className='mb-6'>
+          <h2 className='text-xl font-bold mb-2'>Your Account</h2>
+          <div className='border border-gray-300 rounded-lg p-4'>
+            <p className='mb-2 text-lg'>
+              Current Balance:{' '}
+              <span className='font-bold'>${balance.toFixed(2)}</span>
+            </p>
+          </div>
+        </div>
+
+        <div className='mb-6'>
+          <h2 className='text-xl font-bold mb-2'>Your Discounts</h2>
+          <div className='border border-gray-300 rounded-lg p-4'>
+            {discounts.length > 0 ? (
+              <div className='space-y-2'>
+                {discounts.map((discount) => (
+                  <div
+                    key={discount.call_type}
+                    className='flex justify-between text-lg'
+                  >
+                    <span className='font-semibold capitalize'>
+                      {discount.call_type}:
+                    </span>
+                    <span>{discount.discount}%</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No discounts available.</p>
+            )}
+          </div>
+        </div>
+
+        <div className='mb-6'>
+          <h2 className='text-xl font-bold mb-2'>Change Your Plan</h2>
+          <div className='flex items-center gap-4'>
+            <input
+              type='text'
+              placeholder='Enter new plan'
+              className='border border-gray-300 rounded-lg p-2 flex-1'
+              value={newPlan}
+              onChange={(e) => setNewPlan(e.target.value)}
+            />
+            <button
+              className='bg-blue-500 text-white px-4 py-2 rounded-lg'
+              onClick={handlePlanChange}
+            >
+              Change Plan
+            </button>
+          </div>
+        </div>
+
+        <div className='mb-6'>
+          <h2 className='text-xl font-bold mb-2'>Top Up Your Balance</h2>
+          <div className='flex items-center gap-4'>
+            <input
+              type='number'
+              placeholder='Enter amount'
+              className='border border-gray-300 rounded-lg p-2 flex-1'
+              value={topUpAmount}
+              onChange={(e) => setTopUpAmount(e.target.value)}
+            />
+            <button
+              className='bg-green-500 text-white px-4 py-2 rounded-lg'
+              onClick={handleTopUp}
+            >
+              Top Up
+            </button>
+          </div>
+        </div>
+
+        {/* Список счетов */}
+        <BillList bills={bills} />
+      </div>
+
+      <div className='mb-6'>
+        {/* История звонков */}
+        <CallHistory />
+      </div>
+    </div>
+  );
 };
 
 export default UserPage;

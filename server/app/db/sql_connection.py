@@ -1,32 +1,39 @@
-# app/db/sql_connection.py
 import psycopg
 from flask import current_app
-
-db_connection = None
 
 
 def init_db(config):
     """
     Инициализация соединения с PostgreSQL.
     """
-    global db_connection
     try:
         print(
-            "🔗 Connecting to PostgreSQL with URL:", config.get("SQL_DB_URL")
+            "🔗 Testing connection to PostgreSQL with URL:", config.get("SQL_DB_URL")
         )  # Отладочный вывод
-        db_connection = psycopg.connect(
+        conn = psycopg.connect(
             config.get("SQL_DB_URL"),
             options="-c client_encoding=UTF8 -c lc_messages=en_US.UTF-8",
         )
-        print("✅ PostgreSQL connected successfully!")
+        conn.close()  # Закрываем тестовое соединение
+        print("✅ PostgreSQL connection test successful!")
     except Exception as e:
         print(f"❌ Error connecting to PostgreSQL: {e}")
+        raise e
+
 
 
 def get_db_connection():
     """
-    Возвращает текущее соединение с БД.
+    Создает новое соединение с БД.
     """
-    if db_connection is None:
-        raise Exception("Database connection is not initialized.")
-    return db_connection
+    try:
+        # Используем текущий контекст приложения для доступа к конфигурации
+        db_url = current_app.config["SQL_DB_URL"]
+        return psycopg.connect(
+            db_url,
+            options="-c client_encoding=UTF8 -c lc_messages=en_US.UTF-8",
+        )
+    except Exception as e:
+        print(f"❌ Error creating new PostgreSQL connection: {e}")
+        raise e
+

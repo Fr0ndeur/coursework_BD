@@ -44,13 +44,9 @@ function LoginPage() {
       {/* Левая часть */}
       <div className='w-1/2 bg-black text-white flex flex-col justify-between p-8'>
         <div>
-          <h1 className='text-4xl font-bold'>mts</h1>
-          <p className='text-md mt-2'>mega tele sila</p>
-        </div>
-        <div>
-          <h2 className='text-lg font-semibold'>Полезная информация</h2>
-          <p className='mt-2 text-2xl font-bold'>0 800 50 70 44</p>
-          <p className='text-sm mt-1'>З мобильного по Украине бесплатно</p>
+          <h1 className='text-4xl font-bold'>Курсова робота</h1>
+          <p className='text-md mt-2'>Терещенко Олексій</p>
+          <p className='text-md mt-2'>Сімков Микита</p>
         </div>
       </div>
 
@@ -58,13 +54,13 @@ function LoginPage() {
       <div className='w-1/2 bg-gray-100 flex items-center justify-center'>
         <div className='w-full max-w-md p-6'>
           <h2 className='text-xl font-bold text-center mb-6'>
-            Введите ваши данные для входа
+            Введіть ваші дані для входу
           </h2>
 
           {/* Поле логина */}
           <div className='mb-4'>
             <label htmlFor='username' className='block text-sm mb-1'>
-              Логин
+              Логін
             </label>
             <input
               type='text'
@@ -100,7 +96,7 @@ function LoginPage() {
             onClick={handleLogin}
             disabled={!username || !password}
           >
-            Войти
+            Увійти
           </button>
         </div>
       </div>

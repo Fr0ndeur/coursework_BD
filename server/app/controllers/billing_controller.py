@@ -45,13 +45,15 @@ def get_bills_by_employee(employee_id):
     - Администраторы и бухгалтеры могут просматривать счета любого сотрудника.
     - Обычные пользователи могут просматривать только свои счета.
     """
-    if g.user_role == "user" and g.employee_id != employee_id:
-        return jsonify({"error": "Forbidden"}), 403
+    try:
+        # Передаем user_id и роль текущего пользователя
+        bills = billing_service.get_bills_by_employee_id(employee_id, g.user_id, g.user_role)
+        if not bills:
+            return jsonify({"message": "No bills found for this employee"}), 404
+        return jsonify({"bills": bills}), 200
+    except PermissionError as e:
+        return jsonify({"error": str(e)}), 403
 
-    bills = billing_service.get_bills_by_employee_id(employee_id)
-    if not bills:
-        return jsonify({"message": "No bills found for this employee"}), 404
-    return jsonify({"bills": bills}), 200
 
 
 @billing_bp.route("/", methods=["POST"])

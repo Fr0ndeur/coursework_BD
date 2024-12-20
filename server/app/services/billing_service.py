@@ -3,7 +3,7 @@ from app.repositories.billing_repository import BillingRepository
 from app.repositories.call_repository import CallRepository
 from app.services.rate_service import RateService
 from app.models.bill import Bill
-
+from app.services.user_service import UserService
 from datetime import datetime
 
 
@@ -12,6 +12,7 @@ class BillingService:
         self.call_repo = CallRepository()
         self.repo = BillingRepository()
         self.rate_service = RateService()
+        self.user_service = UserService()
 
     def get_all_bills(self):
         """Получает все счета."""
@@ -21,8 +22,19 @@ class BillingService:
         """Получает счет по ID."""
         return self.repo.find_by_id(bill_id)
 
-    def get_bills_by_employee_id(self, employee_id):
-        """Получает все счета для указанного employee_id."""
+    def get_bills_by_employee_id(self, employee_id, user_id, user_role):
+        """
+        Получает счета для указанного employee_id.
+        Проверяет доступ через UserService.
+        """
+        # Получаем employee_id текущего пользователя
+        current_employee_id = self.user_service.get_employee_id_by_user_id(user_id)
+
+        # Проверяем доступ для пользователя
+        if user_role == "user" and current_employee_id != employee_id:
+            raise PermissionError("You do not have access to these bills")
+
+        # Получаем счета
         return self.repo.find_by_employee_id(employee_id)
 
     def create_bill(self, data):

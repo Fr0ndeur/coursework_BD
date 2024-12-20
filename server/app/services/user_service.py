@@ -28,7 +28,10 @@ class UserService:
 
     def get_employee_id_by_user_id(self, user_id):
         """Получает employee_id по user_id."""
-        return self.repo.get_employee_id_by_user_id(user_id)
+        employee_id = self.repo.get_employee_id_by_user_id(user_id)
+        if not employee_id:
+            raise ValueError("Employee ID not found for the given User ID")
+        return employee_id
 
     def create_user(self, username, password, role, employee_id=None):
         """Создание нового пользователя с хэшированием пароля."""

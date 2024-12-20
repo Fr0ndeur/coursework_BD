@@ -71,17 +71,20 @@ const UserPage = () => {
           }
         );
 
-        if (!callsResponse.ok) {
-          throw new Error('Не удалось получить историю звонков.');
-        }
-
-        const callsData = await callsResponse.json();
-        if (Array.isArray(callsData)) {
-          setCalls(callsData); // Если это массив, обновляем состояние
-        } else if (callsData.calls && Array.isArray(callsData.calls)) {
-          setCalls(callsData.calls); // Если данные содержат поле "calls"
+        if (callsResponse.status === 404) {
+          console.warn('Сообщение сервера: Звонки не найдены.');
+          setCalls([]); // Устанавливаем пустой массив, если данных нет
+        } else if (!callsResponse.ok) {
+          console.warn('Не удалось получить историю звонков.');
         } else {
-          throw new Error('Неверный формат данных по звонкам.');
+          const callsData = await callsResponse.json();
+          if (Array.isArray(callsData)) {
+            setCalls(callsData); // Если это массив, обновляем состояние
+          } else if (callsData.calls && Array.isArray(callsData.calls)) {
+            setCalls(callsData.calls); // Если данные содержат поле "calls"
+          } else {
+            throw new Error('Неверный формат данных по звонкам.');
+          }
         }
 
         const discountsResponse = await fetch(

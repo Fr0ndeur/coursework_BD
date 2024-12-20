@@ -3,10 +3,12 @@ from flask import Blueprint, request, jsonify, g
 from app.services.call_service import CallService
 from app.repositories.employee_repository import EmployeeRepository
 from app.decorators.auth_decorator import jwt_required
+from app.services.user_service import UserService
 
 call_bp = Blueprint("call", __name__)
 call_service = CallService()
 employee_repo = EmployeeRepository()
+user_service = UserService()
 
 
 @call_bp.route("/", methods=["GET"])
@@ -47,13 +49,22 @@ def get_calls_by_employee(employee_id):
     - Администратор и бухгалтер могут просматривать звонки любого сотрудника.
     - Обычный пользователь может просматривать только свои звонки.
     """
-    if g.user_role == "user" and g.employee_id != employee_id:
+    # Получаем текущий user_id из токена
+    current_user_id = g.user_id
+
+    # Получаем employee_id через UserService
+    current_employee_id = user_service.get_employee_id_by_user_id(current_user_id)
+
+    # Проверяем доступ для обычного пользователя
+    if g.user_role == "user" and current_employee_id != employee_id:
         return jsonify({"error": "Forbidden"}), 403
 
+    # Получаем звонки
     calls = call_service.get_calls_by_employee_id(employee_id)
     if not calls:
         return jsonify({"message": "No calls found for this employee"}), 404
     return jsonify({"calls": calls}), 200
+
 
 
 @call_bp.route("/", methods=["POST"])

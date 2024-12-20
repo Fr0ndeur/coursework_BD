@@ -84,6 +84,30 @@ const UserPage = () => {
           throw new Error('Неверный формат данных по звонкам.');
         }
 
+        const discountsResponse = await fetch(
+          `http://localhost:5000/rates/employee/${employeeId}/discounts`,
+          {
+            method: 'GET',
+            credentials: 'include', // Включает cookies
+          }
+        );
+
+        if (!discountsResponse.ok) {
+          throw new Error('Не удалось получить историю звонков.');
+        }
+
+        const discountsData = await discountsResponse.json();
+        if (Array.isArray(discountsData)) {
+          setDiscounts(discountsData); // Если это массив, обновляем состояние
+        } else if (
+          discountsData.discounts &&
+          Array.isArray(discountsData.discounts)
+        ) {
+          setDiscounts(discountsData.discounts); // Если данные содержат поле "calls"
+        } else {
+          throw new Error('Невірний формат даних по знижкам.');
+        }
+
         setLoading(false); // Выключаем состояние загрузки
       } catch (err) {
         console.error('Ошибка при получении данных:', err);

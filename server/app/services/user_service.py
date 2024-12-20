@@ -1,3 +1,4 @@
+# server/app/services/user_service.py
 from app.repositories.user_repository import UserRepository
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt

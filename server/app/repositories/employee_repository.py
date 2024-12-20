@@ -1,4 +1,4 @@
-# app/repositories/employee_repository.py
+# server/app/repositories/employee_repository.py
 from app.db.sql_connection import get_db_connection
 from app.models.employee import Employee
 
@@ -134,3 +134,22 @@ class EmployeeRepository:
             deleted_id = cur.fetchone()
         conn.commit()
         return deleted_id is not None
+    
+    def get_employee_contact_info(self):
+        """
+        Получает информацию о сотрудниках: Имя, Должность, Департамент, Телефон.
+        """
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM get_employee_contact_info()")
+            rows = cur.fetchall()
+        
+        return [
+            {
+                "full_name": row[0],
+                "position": row[1],
+                "department_name": row[2],
+                "internal_phone_number": row[3],
+            }
+            for row in rows
+        ]

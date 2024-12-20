@@ -1,3 +1,4 @@
+# server/app/models/rate.py
 from dataclasses import dataclass
 
 

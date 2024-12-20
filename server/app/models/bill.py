@@ -1,4 +1,4 @@
-# app/models/bill.py
+# server/app/models/bill.py
 from dataclasses import dataclass
 from datetime import date
 

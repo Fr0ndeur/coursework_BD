@@ -1,4 +1,4 @@
-# app/db/couchdb_connection.py
+# server/app/db/couchdb_connection.py
 import os
 import couchdb
 

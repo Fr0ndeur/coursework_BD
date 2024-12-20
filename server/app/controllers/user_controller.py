@@ -1,4 +1,4 @@
-# app/controllers/user_controller.py
+# server/app/controllers/user_controller.py
 from flask import Blueprint, request, jsonify, g
 from app.services.user_service import UserService
 from app.decorators.auth_decorator import jwt_required

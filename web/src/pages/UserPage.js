@@ -3,6 +3,7 @@ import NavigationPanel from '../components/Nav-panel.js';
 import BillList from '../components/BillList';
 import CallHistory from '../components/CallHistory';
 import BillGraf from '../components/BillGraf.js';
+import EmployeeContactTable from '../components/EmployeeContactTable.js';
 
 const UserPage = () => {
   const [discounts, setDiscounts] = useState([]); // Discounts data
@@ -174,6 +175,8 @@ const UserPage = () => {
             )}
           </div>
         </div>
+
+        <EmployeeContactTable />
 
         {/* Список счетов */}
 

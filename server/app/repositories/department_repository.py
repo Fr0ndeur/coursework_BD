@@ -1,4 +1,4 @@
-# app/repositories/department_repository.py
+# server/app/repositories/department_repository.py
 from app.db.sql_connection import get_db_connection
 from app.models.department import Department
 

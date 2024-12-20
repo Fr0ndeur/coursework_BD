@@ -1,4 +1,4 @@
-# app/models/department.py
+# server/app/models/department.py
 from dataclasses import dataclass
 
 

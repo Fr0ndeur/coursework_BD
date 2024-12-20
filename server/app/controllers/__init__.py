@@ -1,3 +1,4 @@
+#server/app/controllers/__init__.py
 from .employee_controller import employee_bp
 from .department_controller import department_bp
 from .billing_controller import billing_bp

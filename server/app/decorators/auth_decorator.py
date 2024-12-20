@@ -1,3 +1,4 @@
+# server/app/decorators/auth_decorator.py
 from functools import wraps
 from flask import request, jsonify, g
 import jwt

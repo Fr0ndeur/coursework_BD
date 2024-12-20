@@ -1,3 +1,4 @@
+#server/app/controllers/employee_controller.py
 from flask import Blueprint, request, jsonify, g
 from app.services.employee_service import EmployeeService
 from app.services.user_service import UserService
@@ -86,3 +87,18 @@ def delete_employee(employee_id):
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
+@employee_bp.route("/contact-info", methods=["GET"])
+@jwt_required(roles=["admin", "accountant", "user"])
+def get_contact_info():
+    """Возвращает имя, должность и телефон сотрудников."""
+    contact_info = employee_service.get_contact_info()
+    return jsonify(contact_info), 200
+
+@employee_bp.route("/contact-info", methods=["GET"])
+@jwt_required(roles=["admin", "accountant", "user"])
+def get_employee_contact_info():
+    """
+    Возвращает информацию о сотрудниках: Имя, Должность, Департамент, Телефон.
+    """
+    contact_info = employee_service.get_employee_contact_info()
+    return jsonify(contact_info), 200

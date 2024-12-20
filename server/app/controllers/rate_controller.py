@@ -1,3 +1,4 @@
+#server/app/controllers/rate_controller.py
 from flask import Blueprint, jsonify, g
 from app.services.rate_service import RateService
 from app.services.user_service import UserService

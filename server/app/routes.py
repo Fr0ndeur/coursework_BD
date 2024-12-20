@@ -1,4 +1,4 @@
-# app/routes.py
+# server/app/routes.py
 from app.controllers import (
     employee_bp,
     department_bp,

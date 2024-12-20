@@ -1,4 +1,4 @@
-# app/controllers/department_controller.py
+# server/app/controllers/department_controller.py
 from flask import Blueprint, request, jsonify, g
 from app.services.department_service import DepartmentService
 from app.decorators.auth_decorator import jwt_required

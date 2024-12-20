@@ -1,4 +1,4 @@
-# app/__init__.py
+# server/app/__init__.py
 from .main import create_app
 
 __all__ = ["create_app"]

@@ -1,4 +1,4 @@
-# app/services/department_service.py
+# server/app/services/department_service.py
 from app.repositories.department_repository import DepartmentRepository
 from app.models.department import Department
 

@@ -1,3 +1,4 @@
+# server/utils/genpass.py
 from werkzeug.security import generate_password_hash
 
 # Создание хеша пароля

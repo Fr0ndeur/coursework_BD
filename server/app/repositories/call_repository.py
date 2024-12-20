@@ -1,4 +1,4 @@
-# app/repositories/call_repository.py
+# server/app/repositories/call_repository.py
 from app.db.couchdb_connection import get_couchdb
 from app.db.sql_connection import get_db_connection
 from app.models.call import Call

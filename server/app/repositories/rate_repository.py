@@ -1,3 +1,4 @@
+# server/app/repositories/rate_repositories.py
 from app.db.sql_connection import get_db_connection
 from app.models.rate import Rate
 

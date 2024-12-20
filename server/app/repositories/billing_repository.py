@@ -1,4 +1,4 @@
-# app/repositories/billing_repository.py
+# server/app/repositories/billing_repository.py
 from app.db.sql_connection import get_db_connection
 from app.models.bill import Bill
 

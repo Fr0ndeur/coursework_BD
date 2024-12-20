@@ -1,4 +1,4 @@
-# app/services/employee_service.py
+# server/app/services/employee_service.py
 from app.repositories.employee_repository import EmployeeRepository
 from app.services.user_service import UserService  # Импортируем UserService
 from app.models.employee import Employee
@@ -84,3 +84,7 @@ class EmployeeService:
 
         # Удаляем сотрудника
         return self.repo.delete(employee_id)
+
+    def get_contact_info(self):
+        """Возвращает контактную информацию сотрудников."""
+        return self.repo.get_employee_contact_info()

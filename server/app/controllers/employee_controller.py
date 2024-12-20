@@ -77,7 +77,12 @@ def update_employee(employee_id):
 @jwt_required(roles=["admin"])
 def delete_employee(employee_id):
     """Удаляет сотрудника по его ID (только для admin)."""
-    success = employee_service.delete_employee(employee_id)
-    if success:
-        return jsonify({"status": "Employee deleted"}), 200
-    return jsonify({"error": "Employee not found"}), 404
+    try:
+        # Передаем текущего пользователя через g.user_id
+        success = employee_service.delete_employee(employee_id, g.user_id)
+        if success:
+            return jsonify({"status": "Employee deleted"}), 200
+        return jsonify({"error": "Employee not found"}), 404
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+

@@ -134,20 +134,26 @@ def pay_bill(bill_id):
     if not bill:
         return jsonify({"error": "Bill not found"}), 404
 
-    # Проверка доступа для обычных пользователей
-    if g.user_role == "user" and bill.employee_id != g.employee_id:
-        return jsonify({"error": "Forbidden"}), 403
-
-    # Оплачиваем счёт
     try:
+        # Получаем employee_id пользователя через billing_service
+        current_employee_id = billing_service.get_employee_id_by_user_id(g.user_id)
+
+        # Проверка доступа для обычных пользователей
+        if g.user_role == "user" and bill.employee_id != current_employee_id:
+            return jsonify({"error": "Forbidden"}), 403
+
+        # Оплачиваем счёт
         updated_bill = billing_service.pay_bill(bill_id)
+
+        return jsonify(updated_bill.to_dict()), 200
+
+    except PermissionError as e:
+        return jsonify({"error": str(e)}), 403
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
-    if not updated_bill:
-        return jsonify({"error": "Unable to pay bill"}), 500
-
-    return jsonify(updated_bill.to_dict()), 200
 
 @billing_bp.route("/summary/<string:month_year>", methods=["GET"])
 @jwt_required(roles=["admin", "accountant"])

@@ -37,6 +37,15 @@ class BillingService:
         # Получаем счета
         return self.repo.find_by_employee_id(employee_id)
 
+    def get_employee_id_by_user_id(self, user_id):
+        """
+        Получает employee_id пользователя через user_service.
+        """
+        employee_id = self.user_service.get_employee_id_by_user_id(user_id)
+        if not employee_id:
+            raise PermissionError("Employee ID not found for the current user.")
+        return employee_id
+
     def create_bill(self, data):
         """Создает новый счет."""
         bill = Bill(

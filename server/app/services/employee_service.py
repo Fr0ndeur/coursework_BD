@@ -1,5 +1,6 @@
 # app/services/employee_service.py
 from app.repositories.employee_repository import EmployeeRepository
+from app.services.user_service import UserService  # Импортируем UserService
 from app.models.employee import Employee
 from datetime import date
 
@@ -9,6 +10,7 @@ import random
 class EmployeeService:
     def __init__(self):
         self.repo = EmployeeRepository()
+        self.user_service = UserService()  # Инициализируем UserService
 
     def get_all_employees(self):
         """Получает всех сотрудников."""
@@ -66,6 +68,19 @@ class EmployeeService:
 
         return self.repo.update(employee)
 
-    def delete_employee(self, employee_id):
-        """Удаляет сотрудника по ID."""
+    def delete_employee(self, employee_id, current_user_id):
+        """
+        Удаляет сотрудника по ID.
+        Проверяет, чтобы текущий пользователь не удалил сам себя.
+        """
+        # Получаем данные текущего пользователя
+        current_user = self.user_service.get_user_by_id(current_user_id)
+        if not current_user:
+            raise ValueError("Current user not found")
+
+        # Проверяем, пытается ли пользователь удалить себя
+        if current_user.employee_id == employee_id:
+            raise ValueError("You cannot delete yourself")
+
+        # Удаляем сотрудника
         return self.repo.delete(employee_id)

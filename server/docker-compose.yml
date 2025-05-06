@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: lab_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: labdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  couchdb:
+    image: couchdb:3
+    container_name: lab_couch
+    restart: always
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: password
+    ports:
+      - "5984:5984"
+    volumes:
+      - couchdb_data:/opt/couchdb/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lab_app
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - couchdb
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    command: gunicorn -c gunicorn_config.py app.main:app
+
+volumes:
+  postgres_data:
+  couchdb_data:

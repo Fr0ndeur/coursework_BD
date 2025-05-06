@@ -6,3 +6,8 @@ psycopg[binary]
 pyjwt
 flask-cors
 requests
+pytest 
+pytest-cov 
+testcontainers 
+pact-python
+gunicorn

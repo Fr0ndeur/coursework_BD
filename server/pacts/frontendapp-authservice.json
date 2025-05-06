@@ -1,0 +1,103 @@
+{
+  "consumer": {
+    "name": "FrontendApp"
+  },
+  "provider": {
+    "name": "AuthService"
+  },
+  "interactions": [
+    {
+      "description": "a request for monthly report",
+      "providerState": "employee 5 has unbilled calls for 2024-05",
+      "request": {
+        "method": "post",
+        "path": "/billing/monthly-report",
+        "body": {
+          "employee_id": 5,
+          "month_year": "2024-05"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "message": "Billing report generated successfully.",
+          "bill": {
+            "employee_id": 5,
+            "month_year": "2024-05",
+            "total_duration": 10,
+            "total_cost": 20.0,
+            "discount_applied": 0.0,
+            "final_amount": 20.0,
+            "payment_status": "UNPAID"
+          }
+        },
+        "matchingRules": {
+          "$.body.message": {
+            "match": "type"
+          },
+          "$.body.bill.employee_id": {
+            "match": "type"
+          },
+          "$.body.bill.month_year": {
+            "match": "type"
+          },
+          "$.body.bill.total_duration": {
+            "match": "type"
+          },
+          "$.body.bill.total_cost": {
+            "match": "type"
+          },
+          "$.body.bill.discount_applied": {
+            "match": "type"
+          },
+          "$.body.bill.final_amount": {
+            "match": "type"
+          },
+          "$.body.bill.payment_status": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a login request",
+      "providerState": "user admin exists with password admin",
+      "request": {
+        "method": "post",
+        "path": "/users/login",
+        "body": {
+          "username": "admin",
+          "password": "admin"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "message": "Login successful",
+          "role": "admin",
+          "token": "eyJhbGciOiJI..."
+        },
+        "matchingRules": {
+          "$.body.message": {
+            "match": "type"
+          },
+          "$.body.role": {
+            "match": "type"
+          },
+          "$.body.token": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

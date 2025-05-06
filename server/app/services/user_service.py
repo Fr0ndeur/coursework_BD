@@ -34,9 +34,13 @@ class UserService:
         return employee_id
 
     def create_user(self, username, password, role, employee_id=None):
-        """Создание нового пользователя с хэшированием пароля."""
+        """Створення нового користувача з перевіркою на існування."""
+        if self.check_username_exists(username):
+            raise ValueError(f"Username '{username}' already exists.")
+        
         hashed_password = generate_password_hash(password)
         return self.repo.create_user(username, hashed_password, role, employee_id)
+
 
     def get_all_users(self):
         """Получение всех пользователей."""
@@ -45,3 +49,7 @@ class UserService:
     def get_user_by_id(self, user_id):
         """Получение пользователя по ID."""
         return self.repo.find_by_id(user_id)
+
+    def check_username_exists(self, username):
+        """Перевіряє, чи існує користувач із таким username."""
+        return self.repo.find_by_username(username) is not None

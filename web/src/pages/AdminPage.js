@@ -128,9 +128,15 @@ const AdminPage = () => {
         body: JSON.stringify(newUser),
       });
 
-      if (!response.ok) throw new Error('Failed to add user.');
-      const addedUser = await response.json();
+      if (!response.ok) {
+        if (response.status === 400) {
+          alert('Користувач вже існує');
+          return;
+        }
+        throw new Error('Failed to add user.');
+      }
 
+      const addedUser = await response.json();
       setUsers((prev) => [...prev, addedUser]);
     } catch (err) {
       console.error(err);
@@ -147,9 +153,21 @@ const AdminPage = () => {
         body: JSON.stringify(newDepartment),
       });
 
-      if (!response.ok) throw new Error('Failed to add department.');
-      const addedDepartment = await response.json();
+      if (!response.ok) {
+        if (response.status === 400) {
+          const errorResponse = await response.json();
+          if (
+            errorResponse.error &&
+            errorResponse.error.includes('already exists')
+          ) {
+            alert('Департамент з такою назвою вже існує');
+            return;
+          }
+        }
+        throw new Error('Failed to add department.');
+      }
 
+      const addedDepartment = await response.json();
       setDepartments((prev) => [...prev, addedDepartment]);
     } catch (err) {
       console.error(err);

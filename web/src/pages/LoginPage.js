@@ -31,7 +31,7 @@ function LoginPage() {
         setErrorMessage(''); // Сброс ошибок
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Ошибка авторизации');
+        setErrorMessage(errorData.message || 'Помилка авторизації');
       }
     } catch (error) {
       console.error('Ошибка при входе:', error);

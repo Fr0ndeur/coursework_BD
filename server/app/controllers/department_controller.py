@@ -46,6 +46,7 @@ def create_department():
         return jsonify({"error": str(e)}), 400
 
 
+
 @department_bp.route("/<int:department_id>", methods=["PUT"])
 @jwt_required(roles=["admin"])
 def update_department(department_id):

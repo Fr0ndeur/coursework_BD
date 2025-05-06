@@ -80,8 +80,12 @@ def create_user():
     if not all([username, password, role]):
         return jsonify({"error": "Username, password, and role are required"}), 400
 
-    user_id = user_service.create_user(username, password, role, employee_id)
-    return jsonify({"user_id": user_id, "message": "User created successfully"}), 201
+    try:
+        user_id = user_service.create_user(username, password, role, employee_id)
+        return jsonify({"user_id": user_id, "message": "User created successfully"}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
 
 
 @user_bp.route("/", methods=["GET"])

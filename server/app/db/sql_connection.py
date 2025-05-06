@@ -10,12 +10,12 @@ def init_db(config):
     try:
         print(
             "🔗 Testing connection to PostgreSQL with URL:", config.get("SQL_DB_URL")
-        )  # Отладочный вывод
+        )
         conn = psycopg.connect(
             config.get("SQL_DB_URL"),
             options="-c client_encoding=UTF8 -c lc_messages=en_US.UTF-8",
         )
-        conn.close()  # Закрываем тестовое соединение
+        conn.close()
         print("✅ PostgreSQL connection test successful!")
     except Exception as e:
         print(f"❌ Error connecting to PostgreSQL: {e}")

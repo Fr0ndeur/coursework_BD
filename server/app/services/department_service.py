@@ -16,11 +16,17 @@ class DepartmentService:
         return self.repo.find_by_id(department_id)
 
     def create_department(self, data):
-        """Создает новый департамент."""
+        """Створює новий департамент."""
         if not data.get("name"):
             raise ValueError("Missing required field: name")
-        department = Department(name=data["name"])
+
+        name = data["name"]
+        if self.check_department_exists(name):
+            raise ValueError(f"Department with name '{name}' already exists.")
+
+        department = Department(name=name)
         return self.repo.insert(department)
+
 
     def update_department(self, department_id, data):
         """Обновляет существующий департамент."""
@@ -33,3 +39,9 @@ class DepartmentService:
     def delete_department(self, department_id):
         """Удаляет департамент по его ID."""
         return self.repo.delete(department_id)
+    
+    def check_department_exists(self, name):
+        """Перевіряє, чи існує департамент із таким ім'ям."""
+        departments = self.repo.find_all()
+        return any(dept.name == name for dept in departments)
+

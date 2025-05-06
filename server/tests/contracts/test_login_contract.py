@@ -9,7 +9,7 @@ def test_login_contract():
     expected = {
         'message': Like('Login successful'),
         'role':    Like('admin'),
-        'token':   Like('eyJhbGciOiJI...')  # любая JWT-строка
+        'token':   Like('eyJhbGciOiJI...')
     }
 
     (consumer
@@ -19,7 +19,6 @@ def test_login_contract():
      .will_respond_with(200, body=expected))
 
     with consumer:
-        # направляем запрос на mock-сервер Pact (обычно localhost:1234)
         url = f'http://{consumer.host_name}:{consumer.port}/users/login'
         r = requests.post(url, json={'username':'admin','password':'admin'})
         assert r.status_code == 200

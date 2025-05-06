@@ -1,3 +1,4 @@
+# tests/unit/test_rate_service.py
 import pytest
 from datetime import datetime
 from app.services.rate_service import RateService

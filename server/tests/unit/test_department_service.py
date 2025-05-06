@@ -1,15 +1,14 @@
+# tests/unit/test_department_service.py
 import pytest
 from app.services.department_service import DepartmentService
 from app.models.department import Department
 
 class DummyRepo:
     def __init__(self):
-        # инициализируем с одним департаментом
         self._db = {1: Department(1, "HR")}
     def find_all(self): return list(self._db.values())
     def find_by_id(self, i): return self._db.get(i)
     def insert(self, dept):
-        # эмулируем автогенерацию ID и сохраняем
         dept.department_id = 2
         self._db[2] = dept
         return dept

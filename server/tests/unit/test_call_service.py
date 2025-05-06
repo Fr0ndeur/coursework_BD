@@ -1,3 +1,4 @@
+# tests/unit/test_call_service.py
 import pytest
 from datetime import datetime
 from app.services.call_service import CallService
@@ -8,11 +9,9 @@ class DummyRepo:
         self.storage = {}
     def insert(self, call):
         call.call_id = "id-123"
-        # сохраняем сам объект, а не dict
         self.storage[call.call_id] = call
         return call
     def find_by_id(self, call_id):
-        # просто возвращаем сохранённый объект
         return self.storage.get(call_id)
     @staticmethod
     def find_calls_by_employee_id(emp_id):

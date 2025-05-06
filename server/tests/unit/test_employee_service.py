@@ -1,3 +1,4 @@
+# tests/unit/test_employee_service.py
 import pytest
 from datetime import date
 from app.services.employee_service import EmployeeService
@@ -5,7 +6,6 @@ from app.models.employee import Employee
 
 class DummyRepo:
     def __init__(self):
-        # создаём изначально одного сотрудника
         self._db = {1: Employee(employee_id=1,
                                card_number="0001",
                                full_name="John Doe",
@@ -16,7 +16,6 @@ class DummyRepo:
     def find_all(self): return list(self._db.values())
     def find_by_id(self,i): return self._db.get(i)
     def insert(self, emp):
-        # автогенерация ID + сохранение
         emp.employee_id = 2
         self._db[2] = emp
         return emp
